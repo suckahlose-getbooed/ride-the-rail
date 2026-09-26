@@ -49,7 +49,7 @@ second one uses it.
 
 | | |
 |---|---|
-| `index.html` | the whole game — one file, 300 KB |
+| `index.html` | the whole game (V35.1) — one file, 1.4 MB with its sounds embedded |
 | `three.min.js` | three.js r128, vendored so it works offline |
 | `manifest.webmanifest` | name, icons, colours, fullscreen landscape |
 | `sw.js` | the offline cache |
