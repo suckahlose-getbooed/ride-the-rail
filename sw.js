@@ -4,7 +4,7 @@
    deleted on activate, so a version bump is the whole upgrade story: edit,
    bump, reload twice. Without the bump you will keep seeing the old build
    and wonder why your changes have not landed. */
-const CACHE = 'rtr-v6';
+const CACHE = 'rtr-v7';
 const SHELL = [
   './',
   './index.html',

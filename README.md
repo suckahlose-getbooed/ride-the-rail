@@ -35,7 +35,7 @@ works.
 
 ## When you change the game
 
-Edit `index.html`, then **bump `CACHE` in `sw.js`** — `rtr-v4` to `rtr-v5`.
+Edit `index.html`, then **bump `CACHE` in `sw.js`** — `rtr-v7` to `rtr-v8`.
 
 That version string is the entire upgrade mechanism. The worker deletes any
 cache that isn't the current one when it activates, so bumping it is what
@@ -49,17 +49,17 @@ second one uses it.
 
 | | |
 |---|---|
-| `index.html` | the whole game (RTR45) — one file, 3.1 MB with its sounds and the Rider's Guide embedded |
+| `index.html` | the whole game (RTR46) — one file, 3.0 MB with its sounds and the Rider's Guide embedded |
 | `three.min.js` | three.js r128, vendored so it works offline |
 | `manifest.webmanifest` | name, icons, colours, fullscreen landscape |
 | `sw.js` | the offline cache |
 | `icons/` | 192, 512, maskable 512, and an Apple touch icon |
 | `serve.py` | local server for testing |
 
-## Not in this build
+## Your records
 
-No player names, no saved records, no leaderboards. This is the container —
-the app shell that will hold them. Records will live in the browser's own
-storage, which the installed app keeps separately from the browser tab, so
-it's worth deciding where you want to play before you start building a
-career.
+Your name, the record book, the charts and the form book are saved in the
+browser's own storage, on this device only. The installed app keeps its
+storage separately from the browser tab, so it's worth deciding where you
+want to play before you start building a career. Clearing the site's data
+clears them with it.
