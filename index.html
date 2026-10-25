@@ -714,6 +714,20 @@
   .chnote{margin:12px 0 0;font:12px/1.5 var(--sans);color:#424a54}
   .chnote b{letter-spacing:.06em}
 
+  /* ══ (RTR47.3) the photo finish print ══════════════════════════════════ */
+  #photo{position:fixed;inset:0;z-index:58;background:#101214;overflow:auto;font-family:var(--sans)}
+  #photo[hidden]{display:none}
+  .pfwrap{min-height:100%;box-sizing:border-box;padding:16px;display:flex;flex-direction:column;
+          align-items:center;justify-content:center;gap:14px}
+  .pfhead{align-self:stretch;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+  .pfhead .rpbug{position:static}
+  .pfbtns{display:flex;gap:8px}
+  .pfbtns .rpb:disabled{opacity:.4;cursor:default}
+  .pfprint{max-width:100%;box-shadow:0 10px 40px rgba(0,0,0,.55)}
+  #pfCv{display:block;position:static;max-width:calc(100vw - 32px);max-height:calc(100vh - 170px);width:auto;height:auto}
+  #pfCap{margin:0;color:#e9e6dc;font:15px/1.4 var(--serif);text-align:center;max-width:760px}
+  #pfCap b{font-weight:600}
+
   /* ══ (RTR47.1) the inquiry board, after the race ════════════════════════ */
   #inqBoard{position:fixed;inset:0;z-index:60;background:#0b0f14;cursor:pointer}
   #inqBoard[hidden]{display:none}
@@ -768,6 +782,17 @@
   <div id="rpCall"></div>
   <div id="rpMine"></div>
   <div class="rpbar"><i id="rpBar"></i></div>
+</div>
+
+<!-- (RTR47.3) the photo finish print -->
+<div id="photo" hidden>
+  <div class="pfwrap">
+    <div class="pfhead"><div class="rpbug"><b>PHOTO</b><div><span id="pfHead"></span><em id="pfSub"></em></div></div>
+      <div class="pfbtns"><button class="rpb" id="pfSave" disabled>SAVE PRINT</button>
+      <button class="rpb main" id="pfClose">BACK TO CHART</button></div></div>
+    <div class="pfprint"><canvas id="pfCv"></canvas></div>
+    <p id="pfCap"></p>
+  </div>
 </div>
 
 <!-- (RTR47.1) the tote board, while the stewards look at the race -->
@@ -1043,7 +1068,7 @@
 <h4>Moving through the day</h4>
 <p>After each race the result screen offers <strong>Go to next race</strong>. After the fifth it reads <strong>Go to next day</strong>, and a fresh card is drawn for the new day. You can go Home between races whenever you like. The card, your place in it and any mount you&rsquo;ve taken are all saved, so you can close the game and pick up the day later.</p>
 <h4>Around the track</h4>
-<p>In the infield, facing the stands, is the <strong>big screen</strong>. On its left it shows the race as it&rsquo;s run, as a television director would cut it; on its right is the tote board, with the race number and the trip, the running time and the last fractions, the running order in saddle-cloth colours and each horse&rsquo;s final odds — and <em>UNOFFICIAL</em> once the winner is home. It shows the post parade and the stretch replay too, and you can see it from the saddle as you straighten for home.</p>
+<p>In the infield, facing the stands, is the <strong>big screen</strong>. On its left it shows the race as it&rsquo;s run, as a television director would cut it; on its right is the tote board, with the race number and the trip, the running time and the last fractions, the running order in saddle-cloth colours and each horse&rsquo;s final odds — and <em>UNOFFICIAL</em> once the winner is home (<em>PHOTO</em> when you are in a photo finish, <em>INQUIRY</em> when the stewards are looking at it). It shows the post parade and the stretch replay too, and you can see it from the saddle as you straighten for home.</p>
 <p>Outside the far turn, behind the end of the grandstand, is the <strong>barn area</strong>, where the horses are stabled: a big barn with a cupola, its doors rolled back on a lit aisle, long shed rows either side of it, gravel, hedges and a white fence. Going into the far turn you ride straight at it. Across the track from the stands, outside the backstretch rail, is the <strong>amusement park</strong>: a midway of striped booths and bunting with a crowd of its own, and behind it a Ferris wheel, a drop tower, a carousel, a swing ride and a roller coaster with a loop, all turning as you go by. None of it makes any difference to the race.</p>
 <figure class="gfig"><img alt="" decoding="async" src="data:image/webp;base64,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"><figcaption><strong>The barn area,</strong> outside the far turn: the big barn with its cupola, its doors open on the lit aisle, and the shed rows running off either side.</figcaption></figure>
 
@@ -1599,6 +1624,8 @@
 </ul>
 <p>With an inquiry on, the race doesn&rsquo;t end on the chart. It ends on the <strong>tote board</strong>: <strong>INQUIRY</strong> flashing in red, the order as they crossed the wire, the numbers of the horses involved flashing, and <em>Please hold all tickets</em> along the foot. About six seconds on, the stewards rule: INQUIRY goes out, <strong>OFFICIAL</strong> lights, the order goes official, the winner&rsquo;s $2 price goes up and the ruling is posted (<em>No change</em>, or which horse is disqualified, from where to where). Two seconds later the chart comes up, official, with the ruling in a box above it. A click or any key skips the board. A note under the chart gives it in full — who was disqualified, from where to where, for interference with whom and where on the track — and the trip notes say who was placed and why. Purses, the record book, the $2 win board and the form book all go by the official result; the form line keeps where the horse crossed the wire, marked <span class="dq">DQ 3rd</span> or <span class="dq up">Plcd 1st</span>. The other riders are judged by the same rules, so you can be placed up as well as down.</p>
 <p><strong>Watch the inquiry</strong> on the chart&rsquo;s header line plays the patrol film of each incident (<button class="gx" data-go="g-ch10">Chapter 10</button>).</p>
+<h4>Photo finishes</h4>
+<p>When you finish <strong>first or second</strong> and the margin between the first two is <strong>a head or less</strong>, the finish goes to the photo. The tote board comes up as it does for an inquiry, with <strong>PHOTO</strong> flashing in amber, the order as they crossed and the two numbers in the photo flashing. About four seconds on the photo is read: OFFICIAL lights, the order goes official and the board posts the winner and the margin (<em>By a nose</em>, <em>By a head</em>). With an inquiry as well, PHOTO and INQUIRY take turns and the stewards&rsquo; ruling is posted. <strong>View the photo</strong> on the chart&rsquo;s header line shows the print (<button class="gx" data-go="g-ch10">Chapter 10</button>).</p>
 <h4>Chart comments</h4>
 <p>Each comment has up to four parts: where the horse was early, the path it took, any trouble, and how it finished. How it finished is judged from the last call (the stretch call) to the wire, and on whether the horse was <strong>in contention</strong>: in the first three, or beaten no more than three lengths. A horse out of it isn&rsquo;t said to have <em>ran on</em> just because he passed a tired one.</p>
 <div class="gtw"><table class="gt">
@@ -1642,12 +1669,20 @@
 <td>Clipped heels and stumbled, but stayed up.</td>
 </tr>
 <tr>
-<td>drew clr / held on / up late</td>
-<td>Won: clear by more than 3 lengths after leading at the last call / led at the last call and held on / came from behind.</td>
+<td>drew clr / held on</td>
+<td>Won after leading at the last call: clear by more than 3 lengths / by 3 lengths or less.</td>
 </tr>
 <tr>
-<td>led, caught late / led, gave way</td>
-<td>Led at the last call, then was beaten into second / into third or worse.</td>
+<td>rallied, drew clr / rallied to win / up late</td>
+<td>Won from behind at the last call: by more than 3 lengths / by more than a length / by a length or less.</td>
+</tr>
+<tr>
+<td>led, caught late / led, outfinished / led, no match</td>
+<td>Led at the last call and finished second, beaten a length or less / more than a length / more than 3 lengths.</td>
+</tr>
+<tr>
+<td>led, gave way</td>
+<td>Led at the last call, then finished third or worse.</td>
 </tr>
 <tr>
 <td>rallied / ran on</td>
@@ -1746,6 +1781,15 @@
 <li><strong>The rider who nudged</strong> is ringed in gold and <strong>the horse checked</strong> in white, both named bottom left. A caption marks the moment of the nudge (<em>No. 3 nudges No. 5</em>).</li>
 <li><strong>It plays at half speed</strong> to start with; <strong>Half speed</strong> toggles it, as in the stretch replay. <strong>Play again</strong> starts it over; <strong>Back to chart</strong> or <kbd>Esc</kbd> returns you.</li>
 <li><strong>Up to three incidents</strong> a race are kept, one after another, each counted in the header.</li>
+</ul>
+<h4>The photo finish</h4>
+<p>A close finish you were part of is kept as a <strong>photo-finish print</strong>. <strong>View the photo</strong> sits beside the other links on the chart&rsquo;s header line, on the result screen and in Past charts.</p>
+<ul>
+<li><strong>It is a strip photo,</strong> made the way the real camera makes one. The camera is on the stand roof, exactly on the line, and sees only one thin slice of the track &mdash; the wire itself. It builds the picture one sliver at a time as the horses pass through it, so the print shows <em>when</em> each part of each horse reached the line, not where it was at one instant. The first nose on the print is the first nose to the wire.</li>
+<li><strong>That is why it looks a little strange.</strong> Anything that stands still on the line &mdash; the dirt, the rail, the mirror&rsquo;s frame &mdash; is smeared into a band right across the print, and a horse comes out a shade long or short depending on his speed.</li>
+<li><strong>The top half is a mirror</strong> on the inside rail, on the line, showing the far side of the horses, as on a real print.</li>
+<li><strong>The white line</strong> is laid on the winner&rsquo;s nose, and the two saddle-cloth numbers are marked above the two noses. The scale along the foot is the race clock, a tick every hundredth of a second.</li>
+<li><strong>It is developed fresh</strong> each time you open it, which takes a moment. <strong>Save print</strong> downloads it as a picture; <strong>Back to chart</strong> or <kbd>Esc</kbd> returns you.</li>
 </ul>
 <div class="gnote"><p><strong>Where replays are kept.</strong> A replay is saved alongside its chart, one for each of your stored charts. If the browser runs short of space, the oldest replays go first and the charts are always kept. That can leave an older chart without its <em>Replay stretch run</em> link. Charts ridden before version 12 never had one, and replays from before version 28 show plain saddle cloths in the stables&rsquo; colours.</p></div>
   <button class="gx gup" data-go="gTop">Contents</button>
@@ -2489,6 +2533,10 @@
 <tr>
 <td>Patrol film</td>
 <td>The stewards&rsquo; film of a race, head-on and from the side. In the game, <em>Watch the inquiry</em> plays it for each incident.</td>
+</tr>
+<tr>
+<td>Photo finish</td>
+<td>A finish too close to call by eye, decided on the strip camera&rsquo;s print. In the game, a head or less between the first two with you one of them; <em>View the photo</em> shows the print.</td>
 </tr>
 <tr>
 <td>Placed</td>
@@ -3649,7 +3697,7 @@
 </tbody>
 </table></div>
 <h5>Chart shorthand</h5>
-<p>pace · prssd pace · mid pack · off pace — ins · 2p · 3w · wide — blockd · shut off · sqzd thru rail · split horses · clipped heels — drew clr · held on · up late · rallied · ran on · held pos · dropped back · wknd late · gave way late · no bid · no late kick — out of contention: mild rally · mild late gain · passed tired rival · no factor</p>
+<p>pace · prssd pace · mid pack · off pace — ins · 2p · 3w · wide — blockd · shut off · sqzd thru rail · split horses · clipped heels — drew clr · held on · up late · rallied to win · caught late · outfinished · no match · rallied · ran on · held pos · dropped back · wknd late · gave way late · no bid · no late kick — out of contention: mild rally · mild late gain · passed tired rival · no factor</p>
   <button class="gx gup" data-go="gTop">Contents</button>
 </section>
         <div class="pfoot">Ride the Rail &middot; Rider&rsquo;s Guide &middot; written for this
@@ -3700,6 +3748,7 @@
     <div class="box" style="margin-top:18px"><div class="boxhead"><h2>Chart</h2>
       <div class="rplinks"><button class="link rplink" id="rReplay" hidden>Replay stretch run</button>
       <button class="link rplink" id="rPatrol" hidden>Watch the inquiry</button>
+      <button class="link rplink" id="rPhoto" hidden>View the photo</button>
       <button class="link rplink svlink" id="rStable" hidden>Visit the winner in the barn</button></div></div>
       <div id="rChart"></div></div>
     <div class="box" style="margin-top:14px"><h2>Trip note &mdash; tap any runner above</h2>
@@ -3775,7 +3824,7 @@
 /* which build this is, printed at the foot of the home page — worth having
    when the game is installed from the home screen and there is no address
    bar to tell you */
-const VERSION = 'RTR47.1';
+const VERSION = 'RTR47.3';
 const clamp = (v,a,b) => v<a?a:v>b?b:v;
 
 /* ══ the device ═════════════════════════════════════════════════════════
@@ -4893,6 +4942,7 @@ function ribbon(samples){
   line.rotation.x = -Math.PI/2;
   line.rotation.z = -yawOf(loopAt(FINISH_U)) + Math.PI/2;
   line.position.set((fa.x+fb.x)/2, 0.02, (fa.z+fb.z)/2);
+  line.name = 'finishLine';            // (RTR47.3) the strip camera, on this line, lifts it
   scene.add(line);
 
   /* Furlong poles, in the infield the way they are on a real track. The
@@ -8791,7 +8841,15 @@ function stepRival(r, dt){
   r.s += ds; r.groundLost += dist - ds;
   if (!r.callEarly && r.s/TOTAL > 0.28) r.callEarly = fieldCall(r.s);
   r.phase = (r.phase + (r.v/STRIDE_LEN)*dt)%1;
-  if (r.finishT===null && r.s>=TOTAL) r.finishT = raceT;
+  /* (RTR47.3) timed to the instant he reached the line within the step, not
+     the step he was found past it in — so two horses home in the same frame
+     are still a nose apart, as the photo will show them. `fin` is how he
+     crossed: for the print. */
+  if (r.finishT===null && r.s>=TOTAL){
+    const over = ds > 1e-6 ? clamp((r.s - TOTAL)/ds, 0, 1) : 0;
+    r.finishT = raceT + (1 - over)*dt;
+    r.fin = { v: ds/Math.max(1e-6, dt), w: r.w, ph: r.phase - over*(r.v/STRIDE_LEN)*dt };
+  }
 }
 
 /* (RTR26) the squeeze ----------------------------------------------------- */
@@ -9091,7 +9149,12 @@ function stepMe(dt){
 
   me.jolt = Math.max(0, me.jolt-dt*3.2);
 
-  if (me.finishT===null && me.s>=TOTAL){ me.finishT=raceT; raceState='after'; afterT=0; }
+  if (me.finishT===null && me.s>=TOTAL){                       // (RTR47.3) to the fraction of a frame
+    const over = ds > 1e-6 ? clamp((me.s - TOTAL)/ds, 0, 1) : 0;
+    me.finishT = raceT + (1 - over)*dt;
+    me.fin = { v: ds/Math.max(1e-6, dt), w: me.w, ph: me.phase - over*Math.max(0.6, me.v/STRIDE_LEN)*dt };
+    raceState='after'; afterT=0;
+  }
 }
 
 function goDown(){ raceState='down'; fallSpot = spotOf(me.s/TOTAL); bumpSound(() => { thud(); thud(); }); fallSound();   // (RTR29) the bump, then the cry
@@ -9749,9 +9812,13 @@ function tripClose(n, effort){
   const g = gainAt(n);
   if (n.place === 1)
     return n.lastPos === 1 ? (n.margin > 3 ? "drew off " + effort : "held on " + effort)
-                           : "ran down the leader " + effort;
+                           : n.margin > 3 ? "took over in the final furlong and drew off " + effort   // (RTR47.2)
+                           : n.margin > 1 ? "ran down the leader " + effort
+                           :                "got up in the final strides " + effort;
   if (n.lastPos === 1)
-    return n.place === 2 ? "showed the way to the final furlong and was collared close home"
+    return n.place === 2 ? (beatenBy(n) > 3 ? "showed the way to the final furlong but was no match for the winner"
+                          : beatenBy(n) > 1 ? "showed the way to the final furlong and was outfinished"
+                          :                   "showed the way to the final furlong and was collared close home")
                          : "showed the way to the final furlong and gave way";
   if (!inContention(n)){                                  // (RTR35.2)
     if (g >= 1) return madeUp(n) >= 3 ? "rallied mildly through the lane but was never a threat"
@@ -9832,8 +9899,13 @@ function chartRun(n){
   if (n.sqThru) bits.push(n.sqRail ? "sqzd thru rail" : "split horses");
   const g = gainAt(n);
   bits.push(
-      n.place===1  ? (n.lastPos===1 ? (n.margin>3 ? "drew clr" : "held on") : "up late")
-    : n.lastPos===1 ? (n.place===2 ? "led, caught late" : "led, gave way")
+      /* (RTR47.2) a closer's word depends on how far he won: "up late" is a
+         head at the wire, not nine lengths. Same for the stretch leader he
+         passed: "caught late" only if he was beaten a length or less. */
+      n.place===1  ? (n.lastPos===1 ? (n.margin>3 ? "drew clr" : "held on")
+                     : n.margin>3 ? "rallied, drew clr" : n.margin>1 ? "rallied to win" : "up late")
+    : n.lastPos===1 ? (n.place===2 ? (beatenBy(n)>3 ? "led, no match" : beatenBy(n)>1 ? "led, outfinished" : "led, caught late")
+                                   : "led, gave way")
     : !inContention(n) && g >= 1                                  // (RTR35.2)
                    ? (madeUp(n) >= 3 ? "mild rally" : madeUp(n) >= 1 ? "mild late gain" : g >= 2 ? "passed tired rivals" : "passed tired rival")
     : !inContention(n) && g === 0
@@ -10055,6 +10127,7 @@ function showResults(){
 
   finishers.sort((a,b) => a.t - b.t);
   const winT = finishers[0].t;
+  const crossed = down ? null : finishers.slice();        // (RTR47.3) for the photo, as they reached the wire
   finishers.forEach((n,i) => {
     n.place = i+1;
     n.margin = i===0 ? (finishers[1] ? (finishers[1].t-winT)*PAR/LENGTH : 0)
@@ -10144,6 +10217,12 @@ function showResults(){
   const patBtn = document.getElementById('rPatrol');
   patBtn.hidden = !patData;
   patBtn.onclick = () => openPatrol(patData, 'results');
+  /* (RTR47.3) and the photo, when you were in it and it was a head or less */
+  const phData = crossed ? photoData(crossed, chartHead) : null;
+  if (phData) savePhoto(chartId, phData);
+  const phBtn = document.getElementById('rPhoto');
+  phBtn.hidden = !phData;
+  phBtn.onclick = () => openPhoto(phData, 'results');
   /* (RTR38) Won it? Then there is a carrot for the winner in the barn — from
      this chart only, and only once: the link goes the moment it is used, and
      past charts never carry it (it is not part of the chart's stored html). */
@@ -10168,7 +10247,7 @@ function showResults(){
       ? ST.rulings.map(ru => pgmName(ru.off) + ', is disqualified from ' + WORDS[ru.off.cross]
           + ' and placed ' + WORDS[ru.off.place] + '.').join(' ')
       : 'No change to the order of finish.') : '';
-  if (INTERF.length) openInqBoard(ST);
+  if (INTERF.length || phData) openInqBoard(ST, phData);
 
   showNote(mine);
   showScreen('results');
@@ -10191,7 +10270,7 @@ function showResults(){
 const IQ_RULE = 6.0, IQ_END = 8.2;
 const IQ = { on:false, t0:0, timer:0, info:null, dots:{} };
 const iqEl = document.getElementById('inqBoard'), iqCv = document.getElementById('inqCv');
-function openInqBoard(ST){
+function openInqBoard(ST, photo){
   const cross = NOTES.filter(n => n.cross > 0).sort((a, b) => a.cross - b.cross);
   const byK = {}; NOTES.forEach(n => { byK[n.k] = n; });
   const inv = new Set();
@@ -10200,7 +10279,12 @@ function openInqBoard(ST){
               cross: cross.slice(0, 4).map(n => n.pgm), official: NOTES.filter(n => !n.fell).slice(0, 4).map(n => n.pgm),
               inv: [...inv].sort((a, b) => a - b),
               dq: ST.rulings.map(ru => ({ pgm: ru.off.pgm, from: ru.off.cross, to: ru.off.place })),
-              win: NOTES[0] && !NOTES[0].fell ? cash2(payTwo(NOTES[0].odds)) : '' };
+              win: NOTES[0] && !NOTES[0].fell ? cash2(payTwo(NOTES[0].odds)) : '',
+              /* (RTR47.3) a photo: the two in it, and what it showed */
+              inq: INTERF.length > 0,
+              photo: photo ? photo.runners.slice(0, 2).map(r => r.pgm) : null,
+              by: photo ? photo.by : '' };
+  IQ.rule = IQ.info.inq ? IQ_RULE : PH_RULE; IQ.end = IQ.info.inq ? IQ_END : PH_END;
   IQ.on = true; IQ.t0 = performance.now();
   iqEl.hidden = false;
   hush();
@@ -10240,14 +10324,14 @@ function iqLed(g, text, x, y, w, h, lit, color, dim){
 function iqDraw(){
   if (!IQ.on) return;
   const t = (performance.now() - IQ.t0)/1000;
-  if (t >= IQ_END){ closeInqBoard(); return; }
+  if (t >= IQ.end){ closeInqBoard(); return; }
   const dpr = Math.min(2, devicePixelRatio || 1), W = innerWidth, H = innerHeight;
   if (iqCv.width !== Math.round(W*dpr) || iqCv.height !== Math.round(H*dpr)){
     iqCv.width = Math.round(W*dpr); iqCv.height = Math.round(H*dpr);
   }
   const g = iqCv.getContext('2d');
   g.setTransform(dpr, 0, 0, dpr, 0, 0);
-  const ruled = t >= IQ_RULE, I = IQ.info;
+  const ruled = t >= IQ.rule, I = IQ.info;
   const blink = Math.floor(t*2.2) % 2 === 0;
   const AMBER = '#ffb52e', RED = '#ff4a2e', DIMR = '#2c110d', DIMA = '#2a2114', PAINT = '#e9e4d6';
 
@@ -10301,7 +10385,10 @@ function iqDraw(){
   /* top: the race, INQUIRY, OFFICIAL, the time */
   panel(3, 3, 15, 9);  label('RACE', 4.4, 7.5, 3.0); amber(String(I.race), 16.8, 7.7, 4.6, 'right');
   panel(20, 2.4, 44, 10.2);
-  iqLed(g, 'INQUIRY', bx + 21*u, by + 3.2*u, 42*u, 8.6*u, !ruled && blink, RED, DIMR);
+  /* (RTR47.3) PHOTO in amber, INQUIRY in red; both, and they take turns */
+  const lamp = !I.inq ? 'PHOTO' : !I.photo ? 'INQUIRY' : (Math.floor(t/1.4) % 2 ? 'INQUIRY' : 'PHOTO');
+  iqLed(g, lamp, bx + 21*u, by + 3.2*u, 42*u, 8.6*u, !ruled && blink,
+        lamp === 'PHOTO' ? AMBER : RED, lamp === 'PHOTO' ? DIMA : DIMR);
   panel(66, 3, 14, 9); amber('OFFICIAL', 73, 7.6, 2.3, 'center', ruled);
   panel(82, 3, 15, 9); label('TIME', 83.3, 5.4, 2.2); amber(I.time, 95.8, 9.3, 2.9, 'right');
 
@@ -10313,14 +10400,25 @@ function iqDraw(){
     const y = 20.6 + i*5.0, pgm = order[i];
     label(lab, 5, y + 2.1, 2.5, '#c9c3b4');
     if (pgm == null) return;
-    const flash = !ruled && I.inv.includes(pgm);
+    const flash = !ruled && (I.inv.includes(pgm) || (I.photo && I.photo.includes(pgm)));
     cloth(pgm, 13, y, 4.2, !flash || blink);
     if (i === 0 && ruled && I.win){ label('$2 WIN', 22, y + 2.1, 2.4, '#c9c3b4'); amber(I.win, 52, y + 2.3, 3.2, 'right'); }
   });
 
   /* right: who, and then what the stewards made of it */
   panel(58, 15, 39, 26);
-  if (!ruled){
+  if (!I.inq){
+    /* (RTR47.3) a photo and nothing else */
+    if (!ruled){
+      label('PHOTO FINISH', 60, 18.3, 2.8);
+      label('FOR WIN', 60, 22.5, 2.2, '#c9c3b4');
+      I.photo.forEach((pgm, i) => cloth(pgm, 61 + i*8.6, 25.5, 6.6, blink));
+    } else {
+      label('PHOTO', 60, 18.3, 2.8);
+      cloth(I.photo[0], 61, 24.0, 6.6, true);
+      amber('BY A ' + I.by.toUpperCase(), 71, 27.4, 3.4);
+    }
+  } else if (!ruled){
     label('STEWARDS’ INQUIRY', 60, 18.3, 2.8);
     label('INVOLVING', 60, 22.5, 2.2, '#c9c3b4');
     I.inv.forEach((pgm, i) => cloth(pgm, 61 + (i % 4)*8.6, 25.5 + Math.floor(i/4)*7.6, 6.6, blink));
@@ -10932,6 +11030,381 @@ function patrolFrame(dt){
   RP.at = at; tvRender(cam, [cam]);
 }
 
+
+/* ══ (RTR47.3) the photo finish ═════════════════════════════════════════
+   When you are first or second and the margin is a head or less, the
+   finish is called on the photo, and the print is kept with the chart.
+   The print is made the way the real camera makes it: a strip camera on the
+   stand roof, its slit lined up exactly on the wire, looking across the
+   track. It sees only that one thin slice of the world, and builds the
+   picture a column at a time as the field goes through it — so the
+   horizontal axis of the print is time, not distance. Whatever stands
+   still on the line (the rail, the dirt, the mirror's frame) is drawn out
+   into a band right across it; a horse comes out a little long or short
+   depending on how fast he was going; and the first nose through the slit
+   is the first nose on the print. A mirror on the inside rail, on the
+   line, shows the far side of the horses in the top half.
+   Nothing about the race is stored but where each horse crossed: when
+   (`dt`, seconds behind the winner, sub-frame), how fast (`v`), on what
+   path (`w`) and where it was in its stride (`ph`). The print is developed
+   again from that each time it is looked at. Each horse is moved so his own
+   nose, in his own stride at that instant, touches the line exactly at his
+   own finishing time — so the print always shows the chart's margin. */
+const PHOTO_KEY = 'rtr.photo.v1';
+const PHOTO_MAX = 0.20;            // lengths: a nose or a head (see lengths())
+const PH_RULE = 4.2, PH_END = 6.2; // the tote board, for a photo with no inquiry
+const PF_CAM_W = WMAX + 18, PF_CAM_Y = 9.0;   // the camera: on the stand roof, on the line
+const PF_MIR_W = -1.25, PF_MIR_LO = 0.30, PF_MIR_HI = 4.30;   // the mirror, inside the rail
+function photoData(finishers, head){
+  const f = finishers;
+  if (!f || f.length < 2 || !isFinite(f[0].t) || !isFinite(f[1].t)) return null;
+  const gap = (f[1].t - f[0].t)*PAR/LENGTH;
+  if (!(gap <= PHOTO_MAX) || !(f[0].me || f[1].me)) return null;
+  const T0 = f[0].t, runners = [];
+  for (const n of f){
+    if (n.t - T0 > 1.4) break;
+    const h = n.me ? me : rivals[n.k - 1];
+    if (!h) continue;
+    const fin = h.fin || { v: h.v, w: h.w, ph: h.phase || 0 };
+    runners.push({ id: n.id, pgm: n.pgm, jk: n.me ? 'You' : (n.jockey || ''), name: n.name, me: !!n.me,
+                   dt: +(n.t - T0).toFixed(5), v: +Math.max(8, fin.v).toFixed(3), w: +fin.w.toFixed(3),
+                   ph: +(((fin.ph % 1) + 1) % 1).toFixed(4) });
+  }
+  return { v:1, head: head || '', race: RACE_NO + 1, day: DAY, trip: TRIPS[tripIdx].label,
+           surf: SURF, surfName: SURFACES[SURF].label.toLowerCase(), time: raceClock(T0), t0: T0,
+           gap: +gap.toFixed(4), by: lengths(gap), runners };
+}
+function loadPhotos(){
+  try { const v = JSON.parse(localStorage.getItem(PHOTO_KEY) || 'null');
+        return v && typeof v === 'object' && !Array.isArray(v) ? v : {}; }
+  catch(e){ return {}; }
+}
+function savePhoto(id, data){
+  const all = loadPhotos();
+  all[id] = data;
+  const live = new Set(loadCharts().map(c => c.id).filter(Boolean));
+  for (const k of Object.keys(all)) if (!live.has(k)) delete all[k];
+  let keys = Object.keys(all);
+  while (keys.length){
+    try { localStorage.setItem(PHOTO_KEY, JSON.stringify(all)); return true; }
+    catch(e){ delete all[keys[0]]; keys = Object.keys(all); }
+  }
+  return false;
+}
+/* the photo is on while the first two are home and close enough: the
+   infield tote says PHOTO rather than UNOFFICIAL */
+function photoLive(){
+  const t = [me.finishT].concat(rivals.map(r => r.finishT)).filter(x => x !== null).sort((a, b) => a - b);
+  if (t.length < 2 || (t[1] - t[0])*PAR/LENGTH > PHOTO_MAX) return false;
+  return me.finishT !== null && me.finishT <= t[1];
+}
+
+/* ── developing the print ─────────────────────────────────────────────── */
+const PF = { on:false, data:null, job:null, back:'results', cache:null };
+const pfEl = document.getElementById('photo'), pfCv = document.getElementById('pfCv');
+const PF_H = LITE ? 420 : 600;
+let pfMirror = null;
+function pfMirrorMesh(){
+  if (pfMirror) return pfMirror;
+  const p = loopWorld(FINISH_U, PF_MIR_W), g = new THREE.Group();
+  const glass = new THREE.Mesh(new THREE.PlaneGeometry(1.4, PF_MIR_HI - PF_MIR_LO),
+    new THREE.MeshBasicMaterial({ color: 0xff00ff, fog: false, toneMapped: false, side: THREE.DoubleSide }));
+  glass.position.y = (PF_MIR_HI + PF_MIR_LO)/2; g.add(glass);
+  const mFrame = mat(0x2a2c2e, 0.7);
+  for (const y of [PF_MIR_LO - 0.06, PF_MIR_HI + 0.06]){
+    const b = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.12, 0.08), mFrame);
+    b.position.set(0, y, 0); g.add(b);
+  }
+  const post = new THREE.Mesh(new THREE.BoxGeometry(0.14, PF_MIR_LO, 0.14), mFrame);
+  post.position.y = PF_MIR_LO/2; g.add(post);
+  g.position.set(p.x, 0, p.z);
+  g.rotation.y = yawOf(p.t);          // the plane's face, PlaneGeometry's +Z, turned to face out across the track
+  g.userData.glass = glass;
+  g.visible = false; scene.add(g);
+  return (pfMirror = g);
+}
+/* the camera's geometry, in the plane of the wire: angles measured down
+   from level, horizontal distance measured in from the camera */
+function pfSetup(D){
+  const base = loopWorld(FINISH_U, 0), t = base.t;
+  const R = new THREE.Vector3(t.rx, 0, t.rz).normalize(), Hd = new THREE.Vector3(t.hx, 0, t.hz).normalize();
+  const ang = (w, y) => Math.atan2(y - PF_CAM_Y, PF_CAM_W - w);
+  const wMax = Math.max(4, ...D.runners.map(r => r.w));
+  const nearW = Math.min(WMAX + 1, wMax + 3.4);
+  const lo = ang(nearW, 0), hi = ang(PF_MIR_W, PF_MIR_HI + 0.45);
+  const pitch = (lo + hi)/2, half = (hi - lo)/2*1.03;
+  const vfov = 2*half*180/Math.PI;
+  const H = PF_H, FW = 2*H + 1;
+  const mk = (w, sign) => {
+    const p = loopWorld(FINISH_U, w);
+    const cam = new THREE.PerspectiveCamera(vfov, FW/H, 1, 2600);
+    cam.position.set(p.x, PF_CAM_Y, p.z);
+    const dir = R.clone().multiplyScalar(sign*Math.cos(pitch)); dir.y = Math.sin(pitch);
+    cam.lookAt(cam.position.clone().add(dir));
+    cam.setViewOffset(FW, H, H, 0, 1, H);
+    return cam;
+  };
+  /* the near plane cuts away everything between the lens and the far side
+     of the outer rail (the main camera), or the mirror (its reflection) */
+  const nearAt = Dh => Math.min(...[lo, hi].map(a => Dh/Math.cos(a)*Math.cos(a - pitch)));
+  const camM = mk(PF_CAM_W, -1);
+  camM.near = Math.max(1, nearAt(PF_CAM_W - (WMAX + 2.2))*0.99); camM.updateProjectionMatrix();
+  const camR = mk(2*PF_MIR_W - PF_CAM_W, 1);
+  camR.near = nearAt(PF_CAM_W - PF_MIR_W - 0.05); camR.updateProjectionMatrix();
+  /* and for the materials that honour them, clipping planes on the same lines */
+  const rb = R.x*base.x + R.z*base.z;
+  const clipM = new THREE.Plane(R.clone().negate(), WMAX + 2.2 + rb);   // keep w <= WMAX + 2.2
+  const clipR = new THREE.Plane(R.clone(), -(PF_MIR_W + rb));            // keep w >= the mirror
+  /* the scan rate: the winner comes out the shape he is */
+  const win = D.runners[0];
+  const Ds = Math.hypot(PF_CAM_W - win.w, PF_CAM_Y - 1.3);
+  const mpp = Ds*2*Math.tan(half)/H;
+  const rate = win.v/mpp;
+  /* from just in front of the winner's nose to well behind the second */
+  const sec = D.runners[1] || win;
+  /* and never narrower than a print is: a third again as wide as it is tall */
+  const tA = -0.9/win.v, tB = Math.max(sec.dt + (2.6*LENGTH + 0.8)/sec.v, tA + 1.35*H/rate);
+  const W = clamp(Math.round((tB - tA)*rate), 200, 1900);
+  /* which way the field goes across the picture: the first through the slit
+     goes on the leading side */
+  const right = new THREE.Vector3(); camM.getWorldDirection(right); right.cross(new THREE.Vector3(0, 1, 0));
+  const ltr = right.dot(Hd) > 0;
+  return { camM, camR, clipM, clipR, H, W, rate, tA, ltr, mpp };
+}
+/* how far in front of his own middle a horse's nose is, in that stride */
+function pfNose(h, phase){
+  h.position.set(0, 0, 0); h.rotation.set(0, 0, 0);
+  poseHorse(h, phase, 0.85, 0);
+  h.updateMatrixWorld(true);
+  let mx = -Infinity; const v = new THREE.Vector3();
+  h.userData.head.traverse(o => {
+    if (!o.isMesh || !o.geometry || !o.geometry.attributes.position) return;
+    const P = o.geometry.attributes.position;
+    for (let i = 0; i < P.count; i++){
+      v.fromBufferAttribute(P, i).applyMatrix4(o.matrixWorld);
+      if (v.x > mx) mx = v.x;
+    }
+  });
+  return isFinite(mx) ? mx : 1.4;
+}
+function pfStart(D){
+  const S = pfSetup(D);
+  const mir = pfMirrorMesh();
+  const horses = D.runners.map(r => {
+    const h = makeHorse(r.id, r.id, riderSeed(r.jk), clothOf(r.id, r.pgm));
+    h.visible = false; scene.add(h);
+    return h;
+  });
+  const nose = horses.map((h, k) => pfNose(h, D.runners[k].ph));
+  const rtOpt = { minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter, generateMipmaps: false,
+                  encoding: THREE.sRGBEncoding, depthBuffer: true };
+  const rtM = new THREE.WebGLRenderTarget(S.W, S.H, rtOpt), rtR = new THREE.WebGLRenderTarget(S.W, S.H, rtOpt);
+  [rtM, rtR].forEach(rt => { rt.scissorTest = true; });
+  const img = document.createElement('canvas'); img.width = S.W; img.height = S.H;
+  const ig = img.getContext('2d');
+  ig.fillStyle = '#16181a'; ig.fillRect(0, 0, S.W, S.H);
+  const J = PF.job = { D, S, mir, horses, nose, rtM, rtR, img, ig, i: 0, done: false,
+             bufM: new Uint8Array(4*S.H*64), bufR: new Uint8Array(4*S.H*64) };
+  requestAnimationFrame(() => pfStep(J));
+}
+/* set the scene aside for the camera, and put it back */
+function pfStage(on, J){
+  if (on){
+    J.hidden = [];
+    const hide = o => { if (o && o.visible){ J.hidden.push(o); o.visible = false; } };
+    scene.children.filter(c => c.userData.isRival).forEach(hide);
+    [myHorse, myShadow, marker, gateGroup, dust, rpRing, scene.getObjectByName('finishLine')].forEach(hide);
+    patRings.forEach(hide);
+    RP.horses.forEach(hide);
+    J.fog = [scene.fog.near, scene.fog.far]; scene.fog.near = 360; scene.fog.far = 1500;
+    J.surf = SURF;
+    if (J.D.surf && J.D.surf !== SURF && TEX[J.D.surf]){ SURF = J.D.surf; applySurface(); }
+    J.sun = [sun.position.clone(), sun.target.position.clone()];
+    const c = loopWorld(FINISH_U, 4);
+    sun.target.position.set(c.x, 0, c.z); sun.target.updateMatrixWorld();
+    sun.position.set(c.x + SUN_OFF.x, SUN_OFF.y, c.z + SUN_OFF.z);
+    J.mir.visible = true;
+    J.horses.forEach(h => { h.visible = true; });
+  } else {
+    J.horses.forEach(h => { h.visible = false; });
+    J.mir.visible = false;
+    J.hidden.forEach(o => { o.visible = true; }); J.hidden = [];
+    scene.fog.near = J.fog[0]; scene.fog.far = J.fog[1];
+    if (SURF !== J.surf){ SURF = J.surf; applySurface(); }
+    sun.position.copy(J.sun[0]); sun.target.position.copy(J.sun[1]); sun.target.updateMatrixWorld();
+    renderer.setRenderTarget(null);
+    renderer.clippingPlanes = [];
+    renderer.setScissorTest(false);
+    renderer.shadowMap.needsUpdate = true;
+  }
+}
+/* the field as it was at time t (seconds after the winner's nose was on the line) */
+function pfPlace(J, t){
+  J.D.runners.forEach((r, k) => {
+    const h = J.horses[k], dt = t - r.dt;
+    const d = J.nose[k] - r.v*dt;                 // his middle, this far short of the wire
+    const p = loopWorld(FINISH_U - d, r.w);
+    h.position.set(p.x, 0, p.z); h.rotation.set(0, yawOf(p.t), 0);
+    const ph = r.ph + r.v*dt/STRIDE_LEN;
+    poseHorse(h, ((ph % 1) + 1) % 1, 0.85, 0);
+  });
+}
+function pfStep(J){
+  if (!J || J.done) return;
+  if (!PF.on || PF.job !== J){ pfFinish(J, false); return; }
+  const S = J.S, t0 = performance.now();
+  pfStage(true, J);
+  const from = J.i;
+  while (J.i < S.W && J.i - from < 64 && performance.now() - t0 < 14){
+    const i = J.i, x = S.ltr ? S.W - 1 - i : i;
+    pfPlace(J, S.tA + (i + 0.5)/S.rate);
+    if (i % 3 === 0) renderer.shadowMap.needsUpdate = true;
+    J.mir.userData.glass.visible = true;
+    renderer.clippingPlanes = [S.clipM];
+    J.rtM.viewport.set(x, 0, 1, S.H); J.rtM.scissor.set(x, 0, 1, S.H);
+    renderer.setRenderTarget(J.rtM); renderer.render(scene, S.camM);
+    J.mir.visible = false;
+    renderer.clippingPlanes = [S.clipR];
+    J.rtR.viewport.set(x, 0, 1, S.H); J.rtR.scissor.set(x, 0, 1, S.H);
+    renderer.setRenderTarget(J.rtR); renderer.render(scene, S.camR);
+    J.mir.visible = true;
+    J.i++;
+  }
+  const n = J.i - from;
+  if (n > 0){
+    const x0 = S.ltr ? S.W - J.i : from;
+    renderer.readRenderTargetPixels(J.rtM, x0, 0, n, S.H, J.bufM);
+    renderer.readRenderTargetPixels(J.rtR, x0, 0, n, S.H, J.bufR);
+    const id = J.ig.createImageData(n, S.H), o = id.data, M = J.bufM, Rf = J.bufR;
+    for (let y = 0; y < S.H; y++){
+      const src = (S.H - 1 - y)*n*4, dst = y*n*4;     // GL rows run bottom up
+      for (let c = 0; c < n; c++){
+        const a = src + c*4, b = dst + c*4;
+        if (M[a] > 235 && M[a + 1] < 30 && M[a + 2] > 235){
+          /* the mirror: a little darker, a little cooler, as glass is */
+          o[b] = Rf[a]*0.84; o[b + 1] = Rf[a + 1]*0.86; o[b + 2] = Math.min(255, Rf[a + 2]*0.90 + 4);
+        } else { o[b] = M[a]; o[b + 1] = M[a + 1]; o[b + 2] = M[a + 2]; }
+        o[b + 3] = 255;
+      }
+    }
+    J.ig.putImageData(id, x0, 0);
+  }
+  pfStage(false, J);
+  pfPaint(J, J.i >= S.W);
+  if (J.i >= S.W){ pfFinish(J, true); return; }
+  requestAnimationFrame(() => pfStep(J));
+}
+function pfFinish(J, ok){
+  J.done = true;
+  J.horses.forEach(discard); J.horses = [];
+  J.rtM.dispose(); J.rtR.dispose();
+  if (PF.job !== J) return;
+  PF.job = null;
+  if (ok) PF.cache = { key: pfKey(J.D), img: J.img, S: J.S };
+  document.getElementById('pfSave').disabled = !ok;
+}
+
+/* ── the print: the picture, its header and its time scale ─────────────── */
+const PF_TOP = 46, PF_FOOT = 40, PF_EDGE = 14;
+function pfPaint(J, done){
+  const D = J.D, S = J.S, img = J.img;
+  const W = S.W + 2*PF_EDGE, H = S.H + PF_TOP + PF_FOOT + PF_EDGE;
+  if (pfCv.width !== W || pfCv.height !== H){ pfCv.width = W; pfCv.height = H; }
+  const g = pfCv.getContext('2d');
+  /* the paper */
+  g.fillStyle = '#f4f1e8'; g.fillRect(0, 0, W, H);
+  g.fillStyle = '#121416'; g.fillRect(PF_EDGE - 1, PF_TOP - 1, S.W + 2, S.H + 2);
+  g.drawImage(img, PF_EDGE, PF_TOP);
+  /* the header, printed on the paper */
+  g.fillStyle = '#16181a'; g.textBaseline = 'middle';
+  g.font = '700 15px Arial, Helvetica, sans-serif'; g.textAlign = 'left';
+  g.fillText('PHOTO FINISH', PF_EDGE, 18);
+  g.font = '600 12px Arial, Helvetica, sans-serif';
+  g.fillText(('Day ' + D.day + ' · Race ' + D.race + ' · ' + D.trip + ' on the ' + D.surfName).toUpperCase(), PF_EDGE, 35);
+  g.textAlign = 'right';
+  g.font = '700 15px ui-monospace, "Courier New", monospace';
+  g.fillText(D.time, W - PF_EDGE, 18);
+  g.font = '600 11px Arial, Helvetica, sans-serif';
+  g.fillText('RIDE THE RAIL · STRIP CAMERA AT THE WIRE', W - PF_EDGE, 35);
+  /* the time scale along the foot: a tick every hundredth, a figure every tenth */
+  const yS = PF_TOP + S.H;
+  const colAt = t => { const i = (t - S.tA)*S.rate; return PF_EDGE + (S.ltr ? S.W - i : i); };
+  g.strokeStyle = '#16181a'; g.lineWidth = 1;
+  const tEnd = S.tA + S.W/S.rate;
+  for (let c = Math.ceil((D.t0 + S.tA)*100); c <= Math.floor((D.t0 + tEnd)*100); c++){
+    const x = Math.round(colAt(c/100 - D.t0)) + 0.5, big = c % 10 === 0, mid = c % 5 === 0;
+    g.beginPath(); g.moveTo(x, yS + 1); g.lineTo(x, yS + (big ? 11 : mid ? 8 : 5)); g.stroke();
+    if (big){
+      g.font = '600 10px ui-monospace, "Courier New", monospace'; g.textAlign = 'center'; g.fillStyle = '#16181a';
+      g.fillText(raceClock(c/100), clamp(x, PF_EDGE + 18, W - PF_EDGE - 18), yS + 22);
+    }
+  }
+  if (!done){
+    const fx = PF_EDGE + (S.ltr ? S.W - J.i : J.i);
+    g.fillStyle = 'rgba(244,241,232,.9)'; g.font = '700 11px Arial, Helvetica, sans-serif';
+    g.textAlign = S.ltr ? 'right' : 'left';
+    g.fillText('DEVELOPING…', S.ltr ? Math.max(PF_EDGE + 90, fx - 10) : Math.min(W - 90, fx + 10), PF_TOP + 16);
+    return;
+  }
+  /* the judges' line, laid on the winner's nose */
+  const x = Math.round(colAt(0)) + 0.5;
+  g.strokeStyle = 'rgba(255,255,255,.95)'; g.lineWidth = 1;
+  g.beginPath(); g.moveTo(x, PF_TOP); g.lineTo(x, PF_TOP + S.H); g.stroke();
+  g.strokeStyle = 'rgba(0,0,0,.55)';
+  for (const dx of [-1, 1]){ g.beginPath(); g.moveTo(x + dx, PF_TOP); g.lineTo(x + dx, PF_TOP + S.H); g.stroke(); }
+  /* and the numbers of the two in the photo, above their noses */
+  D.runners.slice(0, 2).forEach((r, k) => {
+    const nx = colAt(r.dt), cl = CLOTHS[(r.pgm - 1) % CLOTHS.length], s = 20;
+    const bx = Math.round(nx - s/2), by = PF_TOP + 6 + k*(s + 4);
+    g.fillStyle = cl.bg; g.fillRect(bx, by, s, s);
+    g.strokeStyle = 'rgba(255,255,255,.7)'; g.strokeRect(bx + 0.5, by + 0.5, s - 1, s - 1);
+    g.fillStyle = cl.fg; g.font = '700 13px Arial, sans-serif'; g.textAlign = 'center';
+    g.fillText(String(r.pgm), bx + s/2, by + s/2 + 1);
+  });
+}
+function pfCaption(D){
+  const a = D.runners[0], b = D.runners[1];
+  const nm = r => 'No. ' + r.pgm + ' ' + titleCase(r.name);
+  const by = D.by === 'nose' ? 'a nose' : D.by === 'head' ? 'a head' : D.by;
+  return '<b>' + nm(a) + '</b>' + (a.me ? ' (you)' : '') + ' got there first, by ' + by
+    + ', from <b>' + nm(b) + '</b>' + (b.me ? ' (you)' : '') + '.';
+}
+const pfKey = D => (D.head || '') + '|' + D.t0 + '|' + D.runners.length;
+function openPhoto(data, back){
+  if (PF.on || !data || !data.runners || data.runners.length < 2) return;
+  PF.on = true; PF.data = data; PF.back = back;
+  document.getElementById('pfHead').textContent = data.head || '';
+  document.getElementById('pfSub').textContent = 'Photo finish · ' + data.trip + ' on the ' + data.surfName;
+  document.getElementById('pfCap').innerHTML = pfCaption(data);
+  document.getElementById('pfClose').textContent = back === 'history' ? 'BACK TO CHARTS' : 'BACK TO CHART';
+  pfEl.hidden = false;
+  if (PF.cache && PF.cache.key === pfKey(data)){
+    pfPaint({ D: data, S: PF.cache.S, img: PF.cache.img, i: PF.cache.S.W }, true);
+    document.getElementById('pfSave').disabled = false;
+    return;
+  }
+  document.getElementById('pfSave').disabled = true;
+  pfStart(data);
+}
+function closePhoto(){
+  if (!PF.on) return;
+  PF.on = false;                                 // a print still developing stops on the next step
+  pfEl.hidden = true;
+}
+document.getElementById('pfClose').onclick = closePhoto;
+document.getElementById('pfSave').onclick = () => {
+  const D = PF.data; if (!D) return;
+  pfCv.toBlob(b => {
+    if (!b) return;
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(b);
+    a.download = 'Ride the Rail photo - Day ' + D.day + ' Race ' + D.race + '.png';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  }, 'image/png');
+};
+addEventListener('keydown', e => { if (PF.on && e.key === 'Escape'){ e.preventDefault(); closePhoto(); } });
+
 /* ══ the infield screen (RTR40) ══════════════════════════════════════════
    The big board in the infield, across the stretch from the stand, shows
    the race the way a real one does: the track's own broadcast on the left,
@@ -11117,7 +11590,7 @@ function tvPanel(mode){
     order = RP.at.slice().sort((a, b) => a.d - b.d).map(a => RP.data.pp[a.k]);
   const status = mode === 'parade' ? 'POST PARADE'
                : mode === 'race' && raceState === 'load' ? 'AT THE GATE'
-               : mode === 'race' && WIN_T !== null ? (INTERF.length ? 'INQUIRY' : 'UNOFFICIAL')
+               : mode === 'race' && WIN_T !== null ? (INTERF.length ? 'INQUIRY' : photoLive() ? 'PHOTO' : 'UNOFFICIAL')
                : mode === 'replay' ? 'STRETCH RUN' : '';
   const time = mode === 'race' && raceState !== 'load'
     ? (WIN_T !== null ? raceClock(WIN_T) : tenths(timing ? raceT : 0))
@@ -11839,18 +12312,22 @@ function paintHistory(){
       + 'ridden a race.</div></div>';
     return;
   }
-  const reps = loadReplays(), pats = loadPatrols();
+  const reps = loadReplays(), pats = loadPatrols(), phs = loadPhotos();
   el.innerHTML = list.slice().reverse().map(c =>
     '<div class="box" style="margin-top:18px"><div class="boxhead"><h2>' + c.head + '</h2>'
     + '<div class="rplinks">'
     + (c.id && reps[c.id] ? '<button class="link rplink" data-rp="' + c.id + '">Replay stretch run</button>' : '')
     + (c.id && pats[c.id] ? '<button class="link rplink" data-pt="' + c.id + '">Watch the inquiry</button>' : '')
+    + (c.id && phs[c.id] ? '<button class="link rplink" data-ph="' + c.id + '">View the photo</button>' : '')
     + '</div></div><p class="chsub">' + c.sub + '</p>' + c.html + '</div>').join('');
   el.querySelectorAll('[data-rp]').forEach(b => {
     b.onclick = () => openReplay(loadReplays()[b.dataset.rp], 'history');
   });
   el.querySelectorAll('[data-pt]').forEach(b => {
     b.onclick = () => openPatrol(loadPatrols()[b.dataset.pt], 'history');
+  });
+  el.querySelectorAll('[data-ph]').forEach(b => {
+    b.onclick = () => openPhoto(loadPhotos()[b.dataset.ph], 'history');
   });
 }
 
