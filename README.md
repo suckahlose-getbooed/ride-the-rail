@@ -35,7 +35,7 @@ works.
 
 ## When you change the game
 
-Edit `index.html`, then **bump `CACHE` in `sw.js`** — `rtr-v9` to `rtr-v10`.
+Edit `index.html`, then **bump `CACHE` in `sw.js`** — `rtr-v10` to `rtr-v11`.
 
 That version string is the entire upgrade mechanism. The worker deletes any
 cache that isn't the current one when it activates, so bumping it is what
@@ -49,7 +49,7 @@ second one uses it.
 
 | | |
 |---|---|
-| `index.html` | the whole game (RTR47.3) — one file, 3.1 MB with its sounds and the Rider's Guide embedded |
+| `index.html` | the whole game (RTR47.4) — one file, 3.1 MB with its sounds and the Rider's Guide embedded |
 | `three.min.js` | three.js r128, vendored so it works offline |
 | `manifest.webmanifest` | name, icons, colours, fullscreen landscape |
 | `sw.js` | the offline cache |

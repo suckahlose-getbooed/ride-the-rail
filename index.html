@@ -1653,8 +1653,8 @@
 <td>The path, judged on total ground lost: under 1½ lengths (inside), 1½–4, 4–7, and 7 or more.</td>
 </tr>
 <tr>
-<td>blockd / blockd twice</td>
-<td>Checked for room once / two or more times.</td>
+<td>blockd</td>
+<td>Checked for room, once or more. The chart says it once; the trip note says whether it happened more than once.</td>
 </tr>
 <tr>
 <td>shut off</td>
@@ -1686,15 +1686,15 @@
 </tr>
 <tr>
 <td>rallied / ran on</td>
-<td>In contention: gained two or more places / one place from the last call to the finish.</td>
+<td>In contention: gained two or more places and outran the field home by more than a length / gained ground on his own but not that much.</td>
 </tr>
 <tr>
 <td>mild rally / mild late gain</td>
-<td>Out of contention, but gained a place or more and made up ground on the leaders: 3 lengths or more / 1 to 3 lengths.</td>
+<td>Out of contention, but gained a place or more on his own: outran the field home by 3 lengths or more / by less.</td>
 </tr>
 <tr>
 <td>passed tired rival(s)</td>
-<td>Out of contention, and gained a place or more only because horses in front tired: he lost ground on the winner himself.</td>
+<td>Gained a place or more only because horses in front tired: he went no faster than the field himself, and everything he passed lost more than a length to it. In contention or not. Plural when he passed two or more.</td>
 </tr>
 <tr>
 <td>dropped back / gave way late</td>
@@ -2284,7 +2284,7 @@
 </tr>
 <tr>
 <td>My horse gained a place but the chart says <em>no factor</em> or <em>passed tired rival</em>.</td>
-<td><em>Ran on</em> and <em>rallied</em> are only for a horse in contention — in the first three, or within three lengths of the winner. A horse well beaten who picked off a tired one is charted as that (<button class="gx" data-go="g-ch9">Chapter 9</button>).</td>
+<td><em>Ran on</em> and <em>rallied</em> are only for a horse in contention — in the first three, or within three lengths of the winner — who gained on his own. A horse who only picked off tired ones is charted as that, whether he was in it or not. &ldquo;The field&rdquo; here means the middle horse in it: how much he gained or lost from the last call to the wire (<button class="gx" data-go="g-ch9">Chapter 9</button>).</td>
 </tr>
 <tr>
 <td>An old chart has a 3/4 column after Str, or says <em>ran on</em> of a horse well beaten.</td>
@@ -3697,7 +3697,7 @@
 </tbody>
 </table></div>
 <h5>Chart shorthand</h5>
-<p>pace · prssd pace · mid pack · off pace — ins · 2p · 3w · wide — blockd · shut off · sqzd thru rail · split horses · clipped heels — drew clr · held on · up late · rallied to win · caught late · outfinished · no match · rallied · ran on · held pos · dropped back · wknd late · gave way late · no bid · no late kick — out of contention: mild rally · mild late gain · passed tired rival · no factor</p>
+<p>pace · prssd pace · mid pack · off pace — ins · 2p · 3w · wide — blockd · shut off · sqzd thru rail · split horses · clipped heels — drew clr · held on · up late · rallied to win · caught late · outfinished · no match · rallied · ran on · passed tired rival(s) · held pos · dropped back · wknd late · gave way late · no bid · no late kick — out of contention: mild rally · mild late gain · passed tired rival · no factor</p>
   <button class="gx gup" data-go="gTop">Contents</button>
 </section>
         <div class="pfoot">Ride the Rail &middot; Rider&rsquo;s Guide &middot; written for this
@@ -3824,7 +3824,7 @@
 /* which build this is, printed at the foot of the home page — worth having
    when the game is installed from the home screen and there is no address
    bar to tell you */
-const VERSION = 'RTR47.3';
+const VERSION = 'RTR47.4';
 const clamp = (v,a,b) => v<a?a:v>b?b:v;
 
 /* ══ the device ═════════════════════════════════════════════════════════
@@ -9801,12 +9801,36 @@ function lastCallBehind(calls){
 const gainAt = n => (n.lastPos || 8) - n.place;
 /* (RTR35.2) In contention: in the first three, or within CONTEND_L of the
    winner. "Ran on", "rallied" and "kept on" are words for a horse in the race;
-   a horse beaten out of it that passes a tired one is "passed tired rival". */
+   a horse beaten out of it that passes a tired one is "passed tired rival".
+   (RTR47.4) So is a horse in it who only went by horses that tired. */
 const CONTEND_L = 3;
 const beatenBy = n => n.place === 1 ? 0 : Math.abs(n.margin || 0);
 const inContention = n => n.place >= 1 && (n.place <= 3 || beatenBy(n) <= CONTEND_L);
 /* lengths made up on the front of the race from the last call to the wire */
 const madeUp = n => n.lastBehind == null ? 0 : n.lastBehind - beatenBy(n);
+/* (RTR47.4) A late move is judged against the field, not the winner. A winner
+   who draws off makes every horse behind him look tired, so each runner's
+   lengths gained or lost from the last call to the wire is set against the
+   median runner's: lateRel. A horse that outran the field home by more than
+   RALLY_L rallied. A horse that only went by horses that lost more than
+   TIRED_L to the field passed tired rivals, in or out of contention, and the
+   count is the horses he actually passed, not his net change in places. */
+const RALLY_L = 1, TIRED_L = 1;
+function lateMoves(notes){
+  const fin = n => n.cross || n.place;
+  const run = notes.filter(n => n.place >= 1 && n.lastBehind != null);
+  const mu = run.map(madeUp).sort((a,b) => a - b), m = mu.length;
+  const med = !m ? 0 : m % 2 ? mu[(m-1)/2] : (mu[m/2-1] + mu[m/2]) / 2;
+  notes.forEach(n => { n.lateRel = n.place >= 1 && n.lastBehind != null ? madeUp(n) - med : 0; });
+  notes.forEach(n => {
+    const by = n.place >= 1 ? notes.filter(o => o !== n && o.place >= 1
+                 && o.lastPos < n.lastPos && fin(o) > fin(n)) : [];
+    n.passed = by.length;
+    n.passedTired = by.length > 0 && by.every(o => o.lateRel < -TIRED_L);
+  });
+}
+const outran = n => (n.lateRel || 0) > RALLY_L;
+const onlyTired = n => !outran(n) && n.passedTired;
 
 function tripClose(n, effort){
   const g = gainAt(n);
@@ -9821,17 +9845,20 @@ function tripClose(n, effort){
                           :                   "showed the way to the final furlong and was collared close home")
                          : "showed the way to the final furlong and gave way";
   if (!inContention(n)){                                  // (RTR35.2)
-    if (g >= 1) return madeUp(n) >= 3 ? "rallied mildly through the lane but was never a threat"
-                     : madeUp(n) >= 1 ? "made some late headway without threatening"
-                     : g >= 2 ? "passed tiring rivals late but was never a factor"
-                     :          "passed a tiring rival late but was never a factor";
+    if (g >= 1) return n.lateRel >= 3 ? "rallied mildly through the lane but was never a threat"   // (RTR47.4)
+                     : onlyTired(n) ? (n.passed >= 2 ? "passed tiring rivals late but was never a factor"
+                                                     : "passed a tiring rival late but was never a factor")
+                     : "made some late headway without threatening";
     if (g <= -1) return n.energy < n.tank*0.10 ? "emptied out inside the final furlong"
                                                : "was passed inside the final furlong";
     return n.energy < n.tank*0.10 ? "emptied out inside the final furlong"
                                   : "was never a factor";
   }
-  if (g >= 2) return "rallied " + effort + " through the lane";
-  if (g === 1) return n.place===2 ? "kept on " + effort + " for the place"
+  if (g >= 1 && onlyTired(n))                             // (RTR47.4)
+    return (n.passed >= 2 ? "picked off tiring rivals" : "picked off a tiring rival")
+         + (n.place===2 ? " for the place" : n.place===3 ? " for the show" : " late");
+  if (g >= 2 && outran(n)) return "rallied " + effort + " through the lane";
+  if (g >= 1) return n.place===2 ? "kept on " + effort + " for the place"
              : n.place===3 ? "kept on " + effort + " for the show"
              :               "kept on " + effort + " late";
   if (g <= -1) return n.energy < n.tank*0.10 ? "emptied out inside the final furlong"
@@ -9893,7 +9920,7 @@ function chartRun(n){
   bits.push(c===1 ? "pace" : c<=3 ? "prssd pace" : c<=5 ? "mid pack" : "off pace");
   bits.push(n.ground < 1.5 ? "ins" : n.ground < 4 ? "2p" : n.ground < 7 ? "3w" : "wide");
   if (n.shutOff) bits.push("shut off");
-  else if (n.checks) bits.push(n.checks>1 ? "blockd twice" : "blockd");
+  else if (n.checks) bits.push("blockd");                 // (RTR47.4) once; the trip note gives the count
   if (n.fell){ bits.push("clipped heels, fell"); return bits.join(", "); }
   if (n.clips) bits.push("clipped heels");
   if (n.sqThru) bits.push(n.sqRail ? "sqzd thru rail" : "split horses");
@@ -9906,12 +9933,15 @@ function chartRun(n){
                      : n.margin>3 ? "rallied, drew clr" : n.margin>1 ? "rallied to win" : "up late")
     : n.lastPos===1 ? (n.place===2 ? (beatenBy(n)>3 ? "led, no match" : beatenBy(n)>1 ? "led, outfinished" : "led, caught late")
                                    : "led, gave way")
-    : !inContention(n) && g >= 1                                  // (RTR35.2)
-                   ? (madeUp(n) >= 3 ? "mild rally" : madeUp(n) >= 1 ? "mild late gain" : g >= 2 ? "passed tired rivals" : "passed tired rival")
+    : !inContention(n) && g >= 1                                  // (RTR35.2, RTR47.4)
+                   ? (n.lateRel >= 3 ? "mild rally"
+                      : onlyTired(n) ? (n.passed >= 2 ? "passed tired rivals" : "passed tired rival")
+                      : "mild late gain")
     : !inContention(n) && g === 0
                    ? (n.energy < n.tank*0.10 ? "wknd late" : "no factor")
-    : g >= 2       ? "rallied"
-    : g === 1      ? "ran on"
+    : g >= 1 && onlyTired(n) ? (n.passed >= 2 ? "passed tired rivals" : "passed tired rival")   // (RTR47.4)
+    : g >= 2 && outran(n) ? "rallied"
+    : g >= 1       ? "ran on"
     : g <= -2      ? "dropped back"
     : g === -1     ? (n.energy < n.tank*0.10 ? "wknd late" : "gave way late")
     : n.place<=3   ? "held pos"
@@ -10141,6 +10171,7 @@ function showResults(){
   const atCall = lastCallPositions(), offLead = lastCallBehind(CALLS);   // (RTR35.2)
   NOTES.forEach(n => { n.lastPos = atCall[n.k] || (n.call ? n.call.pos : 4);
                        n.lastBehind = offLead[n.k]; });
+  lateMoves(NOTES);                                                     // (RTR47.4)
 
   /* The short note in the body of the chart says only that she fell; what
      happened afterwards belongs underneath it. Every horse that comes down
@@ -12741,6 +12772,7 @@ function premeetRace(job, into){
     const off = lastCallBehind(CALLS);                            // (RTR35.2)
     notes.forEach(n => { n.lastPos = at[n.k] || (n.call ? n.call.pos : 4);
                          n.lastBehind = off[n.k]; });
+    lateMoves(notes);                                                   // (RTR47.4)
     formLines({ R: {cls: job.cls, trip: job.trip, surf: job.surf, runners},
                 notes, calls: CALLS, splits: SPLITS, winT, ds: job.ds, rn: job.rn,
                 pre: true, into });
